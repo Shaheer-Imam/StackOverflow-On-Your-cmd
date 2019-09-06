@@ -147,3 +147,61 @@ def execute(command):
         return (None,None)
     else:
         return (output,errors)
+
+# Scrapping Part
+
+def style_code(soup):
+    style_text=[]
+    code_blocks=[block.get_text() for block in soup.find_all("code")]
+    blockquotes=[block.get_text() for block in soup.find_all("blockquote")]
+    newline=False
+
+    for child in soup.recursiveChildGenerator():
+        name=getattr(child,"name",None)
+        if name is None:
+            if child in code_blocks:
+                if newline:
+                    style_text.append(("code",u"\n%s" % str(child)))
+                    newline=False
+                else:
+                    style_text.append(("code",u"%s" % str(child)))
+            else:
+                newline=child.emdswith('\n')
+                style_text.append(u"%s" % str(child))
+    if type(style_text[-2])==tuple:
+        if style_text[-2][1].endswith('\n'):
+            style_text[-2]=("code",style_text[-2][1][:-1])
+    return urwid.Text(stylized_text)
+
+def get_results(soup):
+    search=[]
+    for result in soup.find_all("div",class_="question-summary search result"):
+        title=result.find_all("div",class_="result-link")[0].find_all("a")[0]
+        if result.find_all("div",class_="status answered")!=[]:
+            answer_count=int(result.find_all("div",class_="status answered")[0].find_all("strong")[0].text)
+        elif result.find_all("div",class_="status answered-accepted")!=[]:
+            answer_count=int(result.find_all("div",class_="status answered-accepted")[0].find_all("strong")[0].text)
+        else:
+            answer_count=0
+
+        search_results.append({
+            "Title": title["title"],
+            "Answers":answer_count,
+            "URL":SO_URL + title["href"]
+            })
+
+    return search
+                
+def souper(url):
+    try:
+        html=requests.get(url,headers={"User-Agent":random.choice(USER_AGENTS)})
+    except requests.exceptions.RequestsException:
+        sys.stdout.write("\n%s%s%s" % (RED, "Unable to fetch result from Stack Overflow."
+                                            "Make sure your device is connected to internet.\n",END))
+        sys.exit(1)
+
+    if re.search("\.com/nocaptcha",html.url):
+        return None
+    else:
+        return BeautifulSoup(html.text,"html.parser")
+    
