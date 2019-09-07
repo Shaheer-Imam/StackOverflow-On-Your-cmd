@@ -204,4 +204,38 @@ def souper(url):
         return None
     else:
         return BeautifulSoup(html.text,"html.parser")
-    
+
+# Main
+
+def search_stackoverflow(query):
+    soup=souper(SO_URL+"/search?pagesize=50&q=%s" % query.replace(' ','+'))
+    if soup==None:
+        return(None,True)
+    else:
+        return (get_results(soup),False)
+
+def get_ques_and_ans(url):
+    soup=souper(url)
+    if soup==None:
+        return "Sorry, Stack Overflow blocked our requests. Try agaian"
+    else:
+        question_title=soup.find_all('a',class_="question-hyperlink")[0].get_text()
+        question_stats=soup.find("div",class_="js-vote-count").get_text()
+        try:
+            question_stats=question_stats+"Votes|"+'|'.join((((soup.find_all("div", class_="module question-stats")[0].get_text())
+                                                              .replace('\n',' ')).replace("     "," | ")).split('|')[:2])
+        except IndexError:
+            question_stats="Could not load Statistics."
+
+        question_desc=style_code(soup.find_all("div", class_="post-text")[0])
+        question_stats=' '.join(question_stats.split())
+
+        answers=[style_code(answer) for answer in soup.find_all("div", class_="post-text")][1:]
+        if len(answers)==0:
+            answers.append(urwid.Text(("no answers", u"\nNo answers for this question.")))
+
+        return question_title,question_desc,question_stats,answers
+
+class Scrollable(urwid.WidgetDecoration):
+    def sizing(self):
+        return frozenset([BOX,])    
