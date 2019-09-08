@@ -239,3 +239,58 @@ def get_ques_and_ans(url):
 class Scrollable(urwid.WidgetDecoration):
     def sizing(self):
         return frozenset([BOX,])    
+    
+    def selectable(self):
+        return True
+
+    def __init__(self,widget):
+        self._trim_top=0
+        self._scroll_action=None
+        self._forward_keypress=None
+        self._old_cursor_coords=None
+        self._rows_max_cached=0
+        self._rows_max_displayable=0
+        self.__super.__init__(widget)
+
+    def render(seld,size,focus=False):
+        maxcol, maxrow=size
+
+        ow=self._original_widget
+        ow_size=self._get_original_widget_size(size)
+        canv=urwid.CompositeCanvas(ow.render(ow_size,focus))
+        canv_cols=canv.cols()
+        canv_rows=canv.rows()
+
+        if canv_cols<=maxcol:
+            pad_width=maxcol-canv_cols
+            if pad_width>0:
+                canv.pad_trim_left_right(0,pad_width)
+
+        if canv_rows<=maxrow:
+            fill_height=maxrow-canv_rows
+            if fill_height>0:
+                canv.pad_trim_top_bottom(0,fill_height)
+        self._rows_max_displayable=maxrow
+        if canv_cols<=maxcol and cav_rows<=maxrow:
+            return canv
+
+        self._adjust_trim_top(canv,size)
+
+        trim_top=self._trim_top
+        trim_end=canv_rows-maxrow-trip_top
+        trim_right=canv_cols-maxcol
+        if trim_top>0:
+            canv.trim(trim_top)
+        if trim_end>0:
+            canv.trim_end(trim_end)
+        if trim_right>0:
+            canv.pad_trim_left_right(0.-trim_right)
+
+        if canv.cursor is not None:
+            curscol, cursrow=canv.cursor
+            if cursrow>=maxrow or cursrow<0:
+                canv.cursor=None
+
+        self._forward_keypress=bool(canv.cursor)
+
+        return canv
