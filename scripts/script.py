@@ -294,3 +294,42 @@ class Scrollable(urwid.WidgetDecoration):
         self._forward_keypress=bool(canv.cursor)
 
         return canv
+    
+    def keypress(self,size,key):
+        if self._forward_keypress:
+            ow=self._original_widget
+            ow_size=self._get_original_widget_size(size)
+
+            if hasattr(ow,"get_cursor_coords"):
+                self._old_cursor_coords=ow.get_cursor_coords(ow_size)
+
+            key=ow.keypress(ow_size,key)
+            if key is None:
+                return None
+
+        command_map=self._command_map
+        if command_map[key]==urwid.CURSOR_UP:
+            self._scroll_action=SCROLL_LINE_UP
+        elif command_map[key]==urwid.CURSOR_DOWN:
+            self._scroll_action=SCROLL_LINE_DOWN
+        elif command_map[key]==urwid.CURSOR_PAGE_UP:
+            self._scroll_action=SCROLL_PAGE_UP
+        elif command_map[key]==urwid.CURSOR_PAGE_DOWN:
+            self._scroll_action=SCROLL_PAGE_DOWN
+        elif command_map[key]==urwid.CURSOR_MAX_LEFT:
+            self._scroll_action=SCROLL_TO_TOP
+        elif command_map[key]==urwid.CURSOR_MAX_RIGHT:
+            self._scroll_action=SCROLL_TO_END
+        else:
+            return key
+
+        self._invalidate()
+
+    def mouse_event(self,size,event,button,col,row,focus):
+        ow=self._original_widget
+        if hasattr(ow,"mouse_event"):
+            ow_size=self._get_original_widget_size(size)
+            row+=self._trim_top
+            return ow.mouse_event(ow_size,event,button,col,row,focus)
+        else:
+            return False
