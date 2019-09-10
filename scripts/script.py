@@ -349,4 +349,28 @@ class Scrollable(urwid.WidgetDecoration):
             return
 
         def ensure_bounds(new_trip_top):
-            return max(0, min(canv_rows-maxrow,new_trim_top)) 
+            return max(0, min(canv_rows-maxrow,new_trim_top))
+        
+        if action==SCROLL_LINE_UP:
+            self._trim_top=ensure_bounds(trim_top-1)
+        elif action==SCROLL_LINE_DOWN:
+            self._trim_top=ensure_bounds(trim_top+1)
+        elif action==SCROLL_PAGE_UP:
+            self._trim_top=ensure_bounds(trim_top-maxrow+1)
+        elif action==SCROLL_PAGE_DOWN:
+            self._trim_top=ensure_bounds(trim_top+maxrow+1)
+        elif action==SCROLL_TO_TOP:
+            self._trim_top=0
+        elif action==SCROLL_TO_END:
+            self._trim_top=canv_rows-maxrow
+        else:
+            self._trim_top=ensure_bounds(trim_top)
+
+        if self._old_cursor_coords is not None and self._old_cursor_coords != canv.cursor:
+            self._old_cursor_coords=None
+            curscol,cursrow=canv.cursor
+            if cursrow<self._trim_top:
+                self._trim_top=cursrow
+            elif cursrow>=self._trim_top+maxrow:
+                self._trim_top=max(0,cursrow-maxrow+1)
+    
