@@ -333,3 +333,20 @@ class Scrollable(urwid.WidgetDecoration):
             return ow.mouse_event(ow_size,event,button,col,row,focus)
         else:
             return False
+        
+    def _adjust_trim_top(self,canv,size):
+        action=self._scroll_action
+        self._scroll_action=None
+        maxcol,maxrow=size
+        trim_top=self._trim_top
+        canv_rows=canv.rows()
+
+        if trim_top<0:
+            trim_top=canv_rows-maxrow+trim_top+1
+
+        if canv_rows<=maxrow:
+            self._trim_top=0
+            return
+
+    def ensure_bounds(new_trip_top):
+        return max(0, min(canv_rows-maxrow,new_trim_top)) 
