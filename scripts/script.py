@@ -348,5 +348,5 @@ class Scrollable(urwid.WidgetDecoration):
             self._trim_top=0
             return
 
-    def ensure_bounds(new_trip_top):
-        return max(0, min(canv_rows-maxrow,new_trim_top)) 
+        def ensure_bounds(new_trip_top):
+            return max(0, min(canv_rows-maxrow,new_trim_top)) 
