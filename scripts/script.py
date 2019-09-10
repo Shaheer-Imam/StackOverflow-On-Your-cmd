@@ -373,4 +373,19 @@ class Scrollable(urwid.WidgetDecoration):
                 self._trim_top=cursrow
             elif cursrow>=self._trim_top+maxrow:
                 self._trim_top=max(0,cursrow-maxrow+1)
+                
+    def _get_original_widget_size(self,size):
+        ow=self._original_widget
+        sizing=ow.sizing()
+        if FIXED in sizing:
+            return ()
+        elif FLOW in sizing:
+            return (size[0],)
+
+    def get_scrollpos(self,size=None,focus=False):
+        return self._trim_top
+
+    def set_scrollpos(self,position):
+        self._trim_top=int(position)
+        self._invalidate()
     
