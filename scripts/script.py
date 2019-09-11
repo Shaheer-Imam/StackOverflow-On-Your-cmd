@@ -464,4 +464,24 @@ class ScrollBar(urwid.WidgetDecoration):
             return urwid.CanvasJoin(combinelist)
         else:
             return urwid.CanvasJoin(reversed(combinelist))
+             
+    @property
+    def scrollbar_width(self):
+        return max(1,self._scrollbar_width)
+
+    @scrollbar_width.setter
+    def scrollbar_width(self,width):
+        self._scrollbar_width=max(1,int(wisth))
+        self._invalidate()
+
+    @property
+    def scrollbar_side(self):
+        return self._scrollbar_side
+
+    @scrollbar_side.setter
+    def scrollbar_side(self,side):
+        if side not in (SCROLLBAR_LEFT,SCROLLBAR_RIGHT):
+            raise ValueError("scrollbar_side must be 'left' or 'right', not %r"%side)
+        self._scrollbar_side=side
+        self._invalidate()
     
