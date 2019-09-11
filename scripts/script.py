@@ -388,4 +388,21 @@ class Scrollable(urwid.WidgetDecoration):
     def set_scrollpos(self,position):
         self._trim_top=int(position)
         self._invalidate()
+        
+    def rows_max(self,size=None,focus=False):
+        if size is not None:
+            ow=self._original_widget
+            ow_size=self._get_original_widget_size(size)
+            sizing=ow.sizing()
+            if FIXED in sizing:
+                self._rows_max_cached=ow.pack(ow_size,focus)[1]
+            elif FLOW in sizing:
+                self._rows_max_cached=ow.rows(ow_size,focus)
+            else:
+                raise RuntimeError("Not a flow/box widget: %r" % self._original_widget)
+        return self._rows_max_cached
+
+    @property
+    def scroll_ratio(self):
+        return self._rows_mac_cached/self._rows_max_displayable
     
