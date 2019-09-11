@@ -450,4 +450,18 @@ class ScrollBar(urwid.WidgetDecoration):
 
         bottom_height=maxrow-thumb_height-top_height
         assert thumb_height+top_height+bottom_height==maxrow
+        
+        top=urwid.SolidCanvas(self._trough_char,sb_width,top_height)
+        thumb=urwid.SolidCanvas(self._thumb_char,sb_width,thumb_height)
+        bottom=urwid.SolidCanvas(self._trough_char,sb_width,bottom_height)
+        sb_canv=urwid.CanvasCombine([
+            {top,None,False),
+            (thumb,None,False),
+            (bottom,None,False),
+            ])
+        combinelist=[(ow_canv,None,True,ow_size[0]),(sb_canv,None,False,sb_widt)]
+        if self._scrollbar_side!=SCROLLBAR_LEFT:
+            return urwid.CanvasJoin(combinelist)
+        else:
+            return urwid.CanvasJoin(reversed(combinelist))
     
