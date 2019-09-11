@@ -406,3 +406,48 @@ class Scrollable(urwid.WidgetDecoration):
     def scroll_ratio(self):
         return self._rows_mac_cached/self._rows_max_displayable
     
+class ScrollBar(urwid.WidgetDecoration):
+
+    def sizing(self):
+        return frozenset((BOX,))
+
+    def selectable(self):
+        return True
+
+    def __init__(self,widget,thumb+char=u'\u2588',trough_char=' ',
+                 size=SCROLLBAR_RIGHT,width=1):
+        self.__super.init__(widget)
+        self._thumb_char=thumb_char
+        self._through_char=trough_char
+        self._scrollbar_side=side
+        self._scrollbar_width=max(1,width)
+        self._original_widgit_size=(0,0)
+        self._dragging=False
+
+    def render(self,szie,focus=False):
+        maxcol,maxrow=size
+        ow=self._original_widget
+        ow_base=self._scrolling_base_widget
+        ow_rows_max=ow_base.rows_max(size,focus)
+        if ow_rows_max<=maxrow:
+            self._original_widget_size=size
+            return ow.render(size,focus)
+
+        sb_width=self._scrollbar_width
+        self._original_widget_size=ow_size=(maxcol-sb_width,maxrow)
+        ow_canv=ow.render(ow_size,focus)
+
+        pos=ow_base.get_scrollpos(ow_size,focus)
+        posmax=ow_rows_max-maxrow
+
+        thumb_weight=min(1,maxrow/max(1,ow_rows_max))
+        thumb_height=max(1,round(thumb_weight*maxrow))
+
+        top_weight=float(pos)/max(1,posmax)
+        top_height=int((maxrow-thumb_height)*top_weight)
+        if top_height==0 and top_weight>0:
+            top_height=1
+
+        bottom_height=maxrow-thumb_height-top_height
+        assert thumb_height+top_height+bottom_height==maxrow
+    
