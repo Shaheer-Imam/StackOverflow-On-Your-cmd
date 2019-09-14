@@ -484,4 +484,19 @@ class ScrollBar(urwid.WidgetDecoration):
             raise ValueError("scrollbar_side must be 'left' or 'right', not %r"%side)
         self._scrollbar_side=side
         self._invalidate()
+             
+    @property
+    def scrolling_base_widget(self):
+        def orig_iter(w):
+            while hasattr(w, "original_widget"):
+                w = w.original_widget
+                yield w
+            yield w
+
+        def is_scrolling_widget(w):
+            return hasattr(w, "get_scrollpos") and hasattr(w, "rows_max")
+
+        for w in orig_iter(self):
+            if is_scrolling_widget(w):
+                return w
     
