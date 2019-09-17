@@ -509,5 +509,36 @@ class ScrollBar(urwid.WidgetDecoration):
 
     def keypress(self, size, key):
         return self._original_widget.keypress(self._original_widget_size, key)
+             
+    def mouse_event(self, size, event, button, col, row, focus):
+        ow = self._original_widget
+        ow_size = self._original_widget_size
+        handled = False
+        if hasattr(ow, "mouse_event"):
+            handled = ow.mouse_event(ow_size, event, button, col, row, focus)
+
+        if not handled and hasattr(ow, "set_scrollpos"):
+            if button == 4: # Scroll wheel up
+                pos = ow.get_scrollpos(ow_size)
+                if pos > 0:
+                    ow.set_scrollpos(pos - 1)
+                    return True
+            elif button == 5: # Scroll wheel down
+                pos = ow.get_scrollpos(ow_size)
+                ow.set_scrollpos(pos + 1)
+                return True
+            elif col == self.scrollbar_column:
+                ow.set_scrollpos(int(row*ow.scroll_ratio))
+                if event == "mouse press":
+                    self._dragging = True
+                elif event == "mouse release":
+                    self._dragging = False
+            elif self._dragging:
+                ow.set_scrollpos(int(row*ow.scroll_ratio))
+                if event == "mouse release":
+                    self._dragging = False
+
+        return False
+
 
     
