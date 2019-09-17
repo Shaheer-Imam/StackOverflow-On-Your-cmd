@@ -499,4 +499,15 @@ class ScrollBar(urwid.WidgetDecoration):
         for w in orig_iter(self):
             if is_scrolling_widget(w):
                 return w
+             
+    @property
+    def scrollbar_column(self):
+        if self.scrollbar_side == SCROLLBAR_LEFT:
+            return 0
+        if self.scrollbar_side == SCROLLBAR_RIGHT:
+            return self._original_widget_size[0]
+
+    def keypress(self, size, key):
+        return self._original_widget.keypress(self._original_widget_size, key)
+
     
