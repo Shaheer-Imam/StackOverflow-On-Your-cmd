@@ -559,5 +559,31 @@ def interleave(a, b):
 
     return result
 
+class App(object):
+    def __init__(self, search_results):
+        self.search_results, self.viewing_answers = search_results, False
+        self.palette = [
+            ("title", "light cyan,bold", "default", "standout"),
+            ("stats", "light green", "default", "standout"),
+            ("menu", "black", "light cyan", "standout"),
+            ("reveal focus", "black", "light cyan", "standout"),
+            ("no answers", "light red", "default", "standout"),
+            ("code", "brown", "default", "standout")
+        ]
+        self.menu = urwid.Text([
+            u'\n',
+            ("menu", u" ENTER "), ("light gray", u" View answers "),
+            ("menu", u" B "), ("light gray", u" Open browser "),
+            ("menu", u" Q "), ("light gray", u" Quit"),
+        ])
 
+        results = list(map(lambda result: urwid.AttrMap(SelectableText(self._stylize_title(result)), None, "reveal focus"), self.search_results)) # TODO: Add a wrap='clip' attribute
+        content = urwid.SimpleListWalker(results)
+        self.content_container = urwid.ListBox(content)
+        layout = urwid.Frame(body=self.content_container, footer=self.menu)
+
+        self.main_loop = urwid.MainLoop(layout, self.palette, unhandled_input=self._handle_input)
+        self.original_widget = self.main_loop.widget
+
+        self.main_loop.run()
     
