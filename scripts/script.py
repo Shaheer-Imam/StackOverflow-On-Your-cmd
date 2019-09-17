@@ -548,6 +548,16 @@ class SelectableText(urwid.Text):
     def keypress(self, size, key):
         return key
 
+def interleave(a, b):
+    result = []
+    while a and b:
+        result.append(a.pop(0))
+        result.append(b.pop(0))
+
+    result.extend(a)
+    result.extend(b)
+
+    return result
 
 
     
