@@ -621,5 +621,26 @@ class App(object):
                 raise urwid.ExitMainLoop()
         elif input in ('q', 'Q'): # Quit
             raise urwid.ExitMainLoop()
+             
+    def _get_selected_link(self):
+        focus_widget, idx = self.content_container.get_focus() # Gets selected item
+        title = focus_widget.base_widget.text
 
+        for result in self.search_results:
+            if title == self._stylize_title(result): # Found selected title's search_result dict
+                return result["URL"]
+
+
+    def _stylize_title(self, search_result):
+        if search_result["Answers"] == 1:
+            return "%s (1 Answer)" % search_result["Title"]
+        else:
+            return "%s (%s Answers)" % (search_result["Title"], search_result["Answers"])
+
+
+    def _stylize_question(self, title, desc, stats):
+        new_title = urwid.Text(("title", u"%s" % title))
+        new_stats = urwid.Text(("stats", u"%s\n" % stats))
+
+        return [new_title, desc, new_stats]
     
