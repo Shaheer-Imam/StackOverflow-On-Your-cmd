@@ -598,7 +598,6 @@ class App(object):
                 pile = urwid.Pile(self._stylize_question(question_title, question_desc, question_stats) + [urwid.Divider('*')] +
                 interleave(answers, [urwid.Divider('-')] * (len(answers) - 1)))
                 padding = ScrollBar(Scrollable(urwid.Padding(pile, left=2, right=2)))
-                #filler = urwid.Filler(padding, valign="top")
                 linebox = urwid.LineBox(padding)
 
                 menu = urwid.Text([
