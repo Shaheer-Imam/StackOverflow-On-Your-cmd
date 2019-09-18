@@ -586,4 +586,41 @@ class App(object):
         self.original_widget = self.main_loop.widget
 
         self.main_loop.run()
+             
+    def _handle_input(self, input):
+        if input == "enter": # View answers
+            url = self._get_selected_link()
+
+            if url != None:
+                self.viewing_answers = True
+                question_title, question_desc, question_stats, answers = get_question_and_answers(url)
+
+                pile = urwid.Pile(self._stylize_question(question_title, question_desc, question_stats) + [urwid.Divider('*')] +
+                interleave(answers, [urwid.Divider('-')] * (len(answers) - 1)))
+                padding = ScrollBar(Scrollable(urwid.Padding(pile, left=2, right=2)))
+                #filler = urwid.Filler(padding, valign="top")
+                linebox = urwid.LineBox(padding)
+
+                menu = urwid.Text([
+                    u'\n',
+                    ("menu", u" ESC "), ("light gray", u" Go back "),
+                    ("menu", u" B "), ("light gray", u" Open browser "),
+                    ("menu", u" Q "), ("light gray", u" Quit"),
+                ])
+
+                self.main_loop.widget = urwid.Frame(body=urwid.Overlay(linebox, self.content_container, "center", ("relative", 60), "middle", 23), footer=menu)
+        elif input in ('b', 'B'): # Open link
+            url = self._get_selected_link()
+
+            if url != None:
+                webbrowser.open(url)
+        elif input == "esc": # Close window
+            if self.viewing_answers:
+                self.main_loop.widget = self.original_widget
+                self.viewing_answers = False
+            else:
+                raise urwid.ExitMainLoop()
+        elif input in ('q', 'Q'): # Quit
+            raise urwid.ExitMainLoop()
+
     
