@@ -6,5 +6,5 @@ rebound [file name]
 For the time being this program is running on linux and cant be used in windows
 
 You have to install the following dependencies:
-pip install BeautifulSoup
-pip install rebound
+-pip install BeautifulSoup
+-pip install rebound
