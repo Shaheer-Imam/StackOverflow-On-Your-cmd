@@ -83,7 +83,7 @@ def get_error_msg(error,lang):
     if error=='':
         return None
     elif lang=="python3":
-        if any(e in error for in in ["KeyboardInterrupt","SystemExit","GeneratorExit"]):
+        if any(e in error for e in ["KeyboardInterrupt","SystemExit","GeneratorExit"]):
             return None
         else:
             return error.split('\n')[-2].strip()
