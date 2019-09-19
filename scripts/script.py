@@ -414,7 +414,7 @@ class ScrollBar(urwid.WidgetDecoration):
     def selectable(self):
         return True
 
-    def __init__(self,widget,thumb+char=u'\u2588',trough_char=' ',
+    def __init__(self,widget,thumb_char=u'\u2588',trough_char=' ',
                  size=SCROLLBAR_RIGHT,width=1):
         self.__super.init__(widget)
         self._thumb_char=thumb_char
@@ -455,7 +455,7 @@ class ScrollBar(urwid.WidgetDecoration):
         thumb=urwid.SolidCanvas(self._thumb_char,sb_width,thumb_height)
         bottom=urwid.SolidCanvas(self._trough_char,sb_width,bottom_height)
         sb_canv=urwid.CanvasCombine([
-            {top,None,False),
+            (top,None,False),
             (thumb,None,False),
             (bottom,None,False),
             ])
