@@ -643,4 +643,19 @@ class App(object):
         new_stats = urwid.Text(("stats", u"%s\n" % stats))
 
         return [new_title, desc, new_stats]
+             
+def confirm(question):
+    """Prompts a given question and handles user input."""
+    valid = {"yes": True, 'y': True, "ye": True,
+             "no": False, 'n': False, '': True}
+    prompt = " [Y/n] "
+
+    while True:
+        print(BOLD + CYAN + question + prompt + END)
+        choice = input().lower()
+        if choice in valid:
+            return valid[choice]
+
+        print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
+
     
