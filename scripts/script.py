@@ -658,4 +658,9 @@ def confirm(question):
 
         print("Please respond with 'yes' or 'no' (or 'y' or 'n').\n")
 
-    
+def print_help():
+    print("%sRebound\n" % (BOLD, END))
+    print("Command-line tool that automatically searches Stack Overflow and displays results in your terminal when you get a compiler error.")
+    print("\n\n%sUsage:%s $ rebound %s[file_name]%s\n" % (UNDERLINE, END, YELLOW, END))
+    print("\n$ python3 %stest.py%s   =>   $ rebound %stest.py%s" % (YELLOW, END, YELLOW, END))
+    print("\nIf you just want to query Stack Overflow, use the -q parameter: $ rebound -q %sWhat is an array comprehension?%s\n\n" % (YELLOW, END))
